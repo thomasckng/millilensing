@@ -102,35 +102,35 @@ def gen_lensed_IMRPhenomD_polar(f, theta, f_ref):
 
     return hp*F, hc*F
 
-def LogLikelihood(theta):
-    theta_waveform = theta[:8]
-    theta_waveform = theta_waveform.at[5].set(0)
-    ra = theta[9]
-    dec = theta[10]
-    hp_test, hc_test = gen_lensed_IMRPhenomD_polar(H1_frequency, theta_waveform, f_ref)
-    align_time = jnp.exp(-1j*2*jnp.pi*H1_frequency*(epoch+theta[5]))
-    h_test_H1 = H1_response(H1_frequency, hp_test, hc_test, ra, dec, gmst, theta[8]) * align_time
-    h_test_L1 = L1_response(L1_frequency, hp_test, hc_test, ra, dec, gmst, theta[8]) * align_time
-    df = H1_frequency[1] - H1_frequency[0]
-    match_filter_SNR_H1 = 4*jnp.sum((jnp.conj(h_test_H1)*H1_data)/H1_psd*df).real
-    match_filter_SNR_L1 = 4*jnp.sum((jnp.conj(h_test_L1)*L1_data)/L1_psd*df).real
-    optimal_SNR_H1 = 4*jnp.sum((jnp.conj(h_test_H1)*h_test_H1)/H1_psd*df).real
-    optimal_SNR_L1 = 4*jnp.sum((jnp.conj(h_test_L1)*h_test_L1)/L1_psd*df).real
+# def LogLikelihood(theta):
+#     theta_waveform = theta[:8]
+#     theta_waveform = theta_waveform.at[5].set(0)
+#     ra = theta[9]
+#     dec = theta[10]
+#     hp_test, hc_test = gen_lensed_IMRPhenomD_polar(H1_frequency, theta_waveform, f_ref)
+#     align_time = jnp.exp(-1j*2*jnp.pi*H1_frequency*(epoch+theta[5]))
+#     h_test_H1 = H1_response(H1_frequency, hp_test, hc_test, ra, dec, gmst, theta[8]) * align_time
+#     h_test_L1 = L1_response(L1_frequency, hp_test, hc_test, ra, dec, gmst, theta[8]) * align_time
+#     df = H1_frequency[1] - H1_frequency[0]
+#     match_filter_SNR_H1 = 4*jnp.sum((jnp.conj(h_test_H1)*H1_data)/H1_psd*df).real
+#     match_filter_SNR_L1 = 4*jnp.sum((jnp.conj(h_test_L1)*L1_data)/L1_psd*df).real
+#     optimal_SNR_H1 = 4*jnp.sum((jnp.conj(h_test_H1)*h_test_H1)/H1_psd*df).real
+#     optimal_SNR_L1 = 4*jnp.sum((jnp.conj(h_test_L1)*h_test_L1)/L1_psd*df).real
 
-    return (match_filter_SNR_H1-optimal_SNR_H1/2) + (match_filter_SNR_L1-optimal_SNR_L1/2)
+#     return (match_filter_SNR_H1-optimal_SNR_H1/2) + (match_filter_SNR_L1-optimal_SNR_L1/2)
 
 
-# ref_param = jnp.array([ 3.10497857e+01,  2.46759666e-01,  3.04854781e-01, -4.92774588e-01,
-#         5.47223231e+02,  1.29378808e-02,  3.30994042e+00,  3.88802965e-01,
-#         3.41074151e-02,  2.55345319e+00, -9.52109059e-01, 5.47223231e+02, 1e-1, 5e-1, 5e-1])
+ref_param = jnp.array([ 3.10497857e+01,  2.46759666e-01,  3.04854781e-01, -4.92774588e-01,
+        5.47223231e+02,  1.29378808e-02,  3.30994042e+00,  3.88802965e-01,
+        3.41074151e-02,  2.55345319e+00, -9.52109059e-01, 5.47223231e+02, 1e-1, 5e-1, 5e-1])
 
-# from jaxgw.PE.heterodyneLikelihood import make_heterodyne_likelihood_mutliple_detector
+from jaxgw.PE.heterodyneLikelihood import make_heterodyne_likelihood_mutliple_detector
 
-# data_list = [H1_data, L1_data]
-# psd_list = [H1_psd, L1_psd]
-# response_list = [H1_response, L1_response]
+data_list = [H1_data, L1_data]
+psd_list = [H1_psd, L1_psd]
+response_list = [H1_response, L1_response]
 
-# logL = make_heterodyne_likelihood_mutliple_detector(data_list, psd_list, response_list, gen_lensed_IMRPhenomD_polar, ref_param, H1_frequency, gmst, epoch, f_ref, 301)
+logL = make_heterodyne_likelihood_mutliple_detector(data_list, psd_list, response_list, gen_lensed_IMRPhenomD_polar, ref_param, H1_frequency, gmst, epoch, f_ref, 301)
 
 
 n_dim = 15
@@ -195,7 +195,7 @@ def posterior(theta):
     theta = theta.at[1].set(q/(1+q)**2) # convert q to eta
     theta = theta.at[7].set(iota) # convert cos iota to iota
     theta = theta.at[10].set(dec) # convert cos dec to dec
-    return LogLikelihood(theta) + prior
+    return logL(theta) + prior
 
 model = RQSpline(n_dim, 10, [128,128], 8)
 
