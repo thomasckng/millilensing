@@ -234,7 +234,7 @@ nf_sampler = Sampler(
 
 nf_sampler.sample(initial_position)
 chains, log_prob, local_accs, global_accs = nf_sampler.get_sampler_state().values()
-np.savez('./GW150914.npz', chains=chains, log_prob=log_prob, local_accs=local_accs, global_accs=global_accs)
+np.savez('./result/GW150914.npz', chains=chains, log_prob=log_prob, local_accs=local_accs, global_accs=global_accs)
 
 print("Local acceptance rate: ", np.mean(local_accs))
 print("Global acceptance rate: ", np.mean(global_accs))

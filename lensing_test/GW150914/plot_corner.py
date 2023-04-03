@@ -3,7 +3,7 @@ import numpy as np
 
 n_dim = 15
 
-chains = np.load('./GW150914.npz')['chains']
+chains = np.load('./result/GW150914.npz')['chains']
 
 samples_all = chains.reshape(-1,n_dim)
 
@@ -43,4 +43,4 @@ g = sns.pairplot(df, corner=True, kind='hist',
 #         g.axes[i,j].axvline(true_param[j], color=sns.color_palette()[3])
 #         g.axes[i,j].axhline(true_param[i], color=sns.color_palette()[3])
 
-g.figure.savefig('./corner.pdf')
+g.figure.savefig('./result/corner.pdf')
