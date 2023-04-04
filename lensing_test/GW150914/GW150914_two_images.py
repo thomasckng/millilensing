@@ -122,7 +122,7 @@ def gen_lensed_IMRPhenomD_polar(f, theta, f_ref):
 
 ref_param = jnp.array([ 3.10497857e+01,  2.46759666e-01,  3.04854781e-01, -4.92774588e-01,
         5.47223231e+02,  1.29378808e-02,  3.30994042e+00,  3.88802965e-01,
-        3.41074151e-02,  2.55345319e+00, -9.52109059e-01, 5.47223231e+02, 1e-1, 5e-1, 5e-1])
+        3.41074151e-02,  2.55345319e+00, -9.52109059e-01, 6e+02, 1e-3, 0, 5e-1])
 
 from jaxgw.PE.heterodyneLikelihood import make_heterodyne_likelihood_mutliple_detector
 
