@@ -101,7 +101,7 @@ def gen_lensed_IMRPhenomD_polar(f, theta, f_ref):
     w = 1j*2*jnp.pi*f
     F = jnp.exp(-1j*Discrete(theta[13], 0.5)*jnp.pi) + (theta[4]/theta[11])*(jnp.exp(w*theta[12]-1j*Discrete(theta[14], 0.5)*jnp.pi))
 
-    return hp*F, hc*F
+    return jnp.array(hp*F), jnp.array(hc*F)
 
 @jax.jit
 def negative_LogLikelihood(theta):
