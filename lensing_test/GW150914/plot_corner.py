@@ -13,6 +13,10 @@ df = pd.DataFrame()
 for i in range(n_dim):
     df[labels[i]] = samples_all[:,i]
 
+for i in [0, 0.5]:
+    df[(df['n_1']>=i) & (df['n_1']<i+0.5)] = i
+    df[(df['n_2']>=i) & (df['n_2']<i+0.5)] = i
+
 import seaborn as sns
 
 g = sns.pairplot(df, corner=True, kind='hist',
