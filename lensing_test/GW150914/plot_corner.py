@@ -13,9 +13,11 @@ df = pd.DataFrame()
 for i in range(n_dim):
     df[labels[i]] = samples_all[:,i]
 
-for i in [0, 0.5]:
-    df[(df['$n_1$']>=i) & (df['$n_1$']<i+0.5)] = i
-    df[(df['$n_2$']>=i) & (df['$n_2$']<i+0.5)] = i
+for i in [0, 0.5, 1]:
+    mask1 = (df['$n_1$'] >= i) & (df['$n_1$'] < i + 0.5)
+    df.loc[mask1, '$n_1$'] = i
+    mask2 = (df['$n_2$'] >= i) & (df['$n_2$'] < i + 0.5)
+    df.loc[mask2, '$n_2$'] = i
 
 import seaborn as sns
 
