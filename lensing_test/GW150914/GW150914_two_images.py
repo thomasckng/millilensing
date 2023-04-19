@@ -33,6 +33,8 @@ gmst = GreenwichMeanSiderealTime(trigger_time)
 f_ref = 20
 f_sample = 4096
 
+
+print("fetching data")
 detectors=event_detectors(event)
 ifos = bilby.gw.detector.InterferometerList(detectors)
 
@@ -48,7 +50,7 @@ if H1_psd_frequency[1] - H1_psd_frequency[0] == H1_frequency[1] - H1_frequency[0
     for i in range(len(H1_psd_frequency)):
         H1_psd[i] = H1_psd_temp[i]
 else:
-    print('df of H1 PSD is not equal to df of H1 data')
+    print("df of H1 PSD is not equal to df of H1 data")
 
 H1_data = H1_data[(H1_frequency>minimum_frequency)*(H1_frequency<maximum_frequency)]
 H1_psd = H1_psd[(H1_frequency>minimum_frequency)*(H1_frequency<maximum_frequency)]
@@ -62,7 +64,7 @@ if L1_psd_frequency[1] - L1_psd_frequency[0] == L1_frequency[1] - L1_frequency[0
     for i in range(len(L1_psd_frequency)):
         L1_psd[i] = L1_psd_temp[i]
 else:
-    print('df of L1 PSD is not equal to df of L1 data')
+    print("df of L1 PSD is not equal to df of L1 data")
 
 L1_data = L1_data[(L1_frequency>minimum_frequency)*(L1_frequency<maximum_frequency)]
 L1_psd = L1_psd[(L1_frequency>minimum_frequency)*(L1_frequency<maximum_frequency)]
@@ -127,9 +129,8 @@ import scipy
 
 print("Calculating the reference parameters")
 optimize_result = scipy.optimize.differential_evolution(negative_LogLikelihood, optimize_prior_range, maxiter=10000)
-ref_param = optimize_result.x
-print("shape: ", ref_param.shape)
-ref_param = jnp.array(ref_param)
+ref_param = jnp.array(optimize_result.x)
+print("Reference parameters: ", ref_param)
 # ref_param = jnp.array([ 3.10497857e+01,  2.46759666e-01,  3.04854781e-01, -4.92774588e-01,
 #         5.47223231e+02,  1.29378808e-02,  3.30994042e+00,  3.88802965e-01,
 #         3.41074151e-02,  2.55345319e+00, -9.52109059e-01, 6e+02, 1e-3, 0, 5e-1])
