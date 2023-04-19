@@ -128,7 +128,7 @@ optimize_prior_range = jnp.array([[10,80],[0.2,0.25],[-1,1],[-1,1],[0,2000],[-0.
 import scipy
 
 print("Calculating the reference parameters")
-optimize_result = scipy.optimize.differential_evolution(negative_LogLikelihood, optimize_prior_range, maxiter=10000, workers=-1)
+optimize_result = scipy.optimize.differential_evolution(negative_LogLikelihood, optimize_prior_range, maxiter=10000)
 ref_param = jnp.array(optimize_result.x)
 print("Reference parameters: ", ref_param)
 # ref_param = jnp.array([ 3.10497857e+01,  2.46759666e-01,  3.04854781e-01, -4.92774588e-01,
