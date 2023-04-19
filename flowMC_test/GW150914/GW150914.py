@@ -33,6 +33,7 @@ gmst = GreenwichMeanSiderealTime(trigger_time)
 f_ref = 20
 f_sample = 4096
 
+print("fetching data")
 detectors=event_detectors(event)
 ifos = bilby.gw.detector.InterferometerList(detectors)
 
