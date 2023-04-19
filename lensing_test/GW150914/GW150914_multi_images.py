@@ -90,7 +90,6 @@ L1_response = make_detector_response(L1[0], L1[1])
 #     hp, hc = gen_IMRPhenomD_polar(f, theta_waveform, f_ref)
 #     return L1_response(f, hp, hc, ra, dec, gmst, theta[8]) * jnp.exp(-1j*2*jnp.pi*f*(epoch+theta[5]))
 
-@jax.jit
 def gen_lensed_IMRPhenomD_polar(f, theta, f_ref):
     hp, hc = gen_IMRPhenomD_polar(f, theta, f_ref)
 
@@ -101,38 +100,29 @@ def gen_lensed_IMRPhenomD_polar(f, theta, f_ref):
     w = 1j*2*jnp.pi*f
     F = jnp.exp(-1j*Discrete(theta[13], 0.5)*jnp.pi) + (theta[4]/theta[11])*(jnp.exp(w*theta[12]-1j*Discrete(theta[14], 0.5)*jnp.pi))
 
-    return jnp.array(hp*F), jnp.array(hc*F)
+    return hp*F, hc*F
 
-@jax.jit
-def negative_LogLikelihood(theta):
-    theta_waveform = theta[:8]
-    theta_waveform = theta_waveform.at[5].set(0)
-    ra = theta[9]
-    dec = theta[10]
-    hp_test, hc_test = gen_lensed_IMRPhenomD_polar(H1_frequency, theta_waveform, f_ref)
-    align_time = jnp.exp(-1j*2*jnp.pi*H1_frequency*(epoch+theta[5]))
-    h_test_H1 = H1_response(H1_frequency, hp_test, hc_test, ra, dec, gmst, theta[8]) * align_time
-    h_test_L1 = L1_response(L1_frequency, hp_test, hc_test, ra, dec, gmst, theta[8]) * align_time
-    df = H1_frequency[1] - H1_frequency[0]
-    match_filter_SNR_H1 = 4*jnp.sum((jnp.conj(h_test_H1)*H1_data)/H1_psd*df).real
-    match_filter_SNR_L1 = 4*jnp.sum((jnp.conj(h_test_L1)*L1_data)/L1_psd*df).real
-    optimal_SNR_H1 = 4*jnp.sum((jnp.conj(h_test_H1)*h_test_H1)/H1_psd*df).real
-    optimal_SNR_L1 = 4*jnp.sum((jnp.conj(h_test_L1)*h_test_L1)/L1_psd*df).real
+# def LogLikelihood(theta):
+#     theta_waveform = theta[:8]
+#     theta_waveform = theta_waveform.at[5].set(0)
+#     ra = theta[9]
+#     dec = theta[10]
+#     hp_test, hc_test = gen_lensed_IMRPhenomD_polar(H1_frequency, theta_waveform, f_ref)
+#     align_time = jnp.exp(-1j*2*jnp.pi*H1_frequency*(epoch+theta[5]))
+#     h_test_H1 = H1_response(H1_frequency, hp_test, hc_test, ra, dec, gmst, theta[8]) * align_time
+#     h_test_L1 = L1_response(L1_frequency, hp_test, hc_test, ra, dec, gmst, theta[8]) * align_time
+#     df = H1_frequency[1] - H1_frequency[0]
+#     match_filter_SNR_H1 = 4*jnp.sum((jnp.conj(h_test_H1)*H1_data)/H1_psd*df).real
+#     match_filter_SNR_L1 = 4*jnp.sum((jnp.conj(h_test_L1)*L1_data)/L1_psd*df).real
+#     optimal_SNR_H1 = 4*jnp.sum((jnp.conj(h_test_H1)*h_test_H1)/H1_psd*df).real
+#     optimal_SNR_L1 = 4*jnp.sum((jnp.conj(h_test_L1)*h_test_L1)/L1_psd*df).real
 
-    return -((match_filter_SNR_H1-optimal_SNR_H1/2) + (match_filter_SNR_L1-optimal_SNR_L1/2))
+#     return (match_filter_SNR_H1-optimal_SNR_H1/2) + (match_filter_SNR_L1-optimal_SNR_L1/2)
 
-optimize_prior_range = jnp.array([[10,80],[0.2,0.25],[-1,1],[-1,1],[0,2000],[-0.1,0.1],[0,2*np.pi],[0,np.pi],[0,np.pi],[0,2*np.pi],[-np.pi/2,np.pi/2],[0,5000],[5e-4,1],[0,1.49999],[0,1.49999]])
 
-import scipy
-
-print("Calculating the reference parameters")
-optimize_result = scipy.optimize.differential_evolution(negative_LogLikelihood, optimize_prior_range, maxiter=10000)
-ref_param = optimize_result.x
-print("shape: ", ref_param.shape)
-ref_param = jnp.array(ref_param)
-# ref_param = jnp.array([ 3.10497857e+01,  2.46759666e-01,  3.04854781e-01, -4.92774588e-01,
-#         5.47223231e+02,  1.29378808e-02,  3.30994042e+00,  3.88802965e-01,
-#         3.41074151e-02,  2.55345319e+00, -9.52109059e-01, 6e+02, 1e-3, 0, 5e-1])
+ref_param = jnp.array([ 3.10497857e+01,  2.46759666e-01,  3.04854781e-01, -4.92774588e-01,
+        5.47223231e+02,  1.29378808e-02,  3.30994042e+00,  3.88802965e-01,
+        3.41074151e-02,  2.55345319e+00, -9.52109059e-01, 6e+02, 1e-3, 0, 5e-1])
 
 from jaxgw.PE.heterodyneLikelihood import make_heterodyne_likelihood_mutliple_detector
 
@@ -170,7 +160,8 @@ rng_key_set = initialize_rng_keys(n_chains, seed=42)
 
 print("Initializing MCMC model and normalizing flow model.")
 
-prior_range = jnp.array([[10,80],[0.125,1.0],[-1,1],[-1,1],[0,5000],[-0.1,0.1],[0,2*np.pi],[-1,1],[0,np.pi],[0,2*np.pi],[-1,1],[0,5000],[5e-4,1],[0,1.49999],[0,1.49999]])
+prior_range = jnp.array([[10,80],[0.125,1.0],[-1,1],[-1,1],[0,5000],[-0.1,0.1],[0,2*np.pi],[-1,1],[0,np.pi],[0,2*np.pi],[-1,1], [0,5000], [5e-4,1], [0,1.49999],[0,1.49999]])
+# optimize_prior_range = jnp.array([[10,80],[0.2,0.25],[-1,1],[-1,1],[0,2000],[-0.1,0.1],[0,2*np.pi],[0,np.pi],[0,np.pi],[0,2*np.pi],[-np.pi/2,np.pi/2]])
 
 
 initial_position = jax.random.uniform(rng_key_set[0], shape=(int(n_chains), n_dim)) * 1
@@ -215,8 +206,8 @@ posterior = posterior
 mass_matrix = jnp.eye(n_dim)
 mass_matrix = mass_matrix.at[1,1].set(1e-3)
 mass_matrix = mass_matrix.at[5,5].set(1e-3)
-mass_matrix = mass_matrix.at[13,13].set(1e-1)
-mass_matrix = mass_matrix.at[14,14].set(1e-1)
+mass_matrix = mass_matrix.at[13,13].set(1e-2)
+mass_matrix = mass_matrix.at[14,14].set(1e-2)
 
 local_sampler = MALA(posterior, True, {"step_size": mass_matrix*3e-3})
 print("Running sampler")
