@@ -104,35 +104,35 @@ def gen_lensed_IMRPhenomD_polar(f, theta, f_ref):
 
     return jnp.array(hp*F), jnp.array(hc*F)
 
-@jax.jit
-def negative_LogLikelihood(theta):
-    theta_waveform = theta[:8]
-    theta_waveform = theta_waveform.at[5].set(0)
-    ra = theta[9]
-    dec = theta[10]
-    hp_test, hc_test = gen_lensed_IMRPhenomD_polar(H1_frequency, theta_waveform, f_ref)
-    align_time = jnp.exp(-1j*2*jnp.pi*H1_frequency*(epoch+theta[5]))
-    h_test_H1 = H1_response(H1_frequency, hp_test, hc_test, ra, dec, gmst, theta[8]) * align_time
-    h_test_L1 = L1_response(L1_frequency, hp_test, hc_test, ra, dec, gmst, theta[8]) * align_time
-    df = H1_frequency[1] - H1_frequency[0]
-    match_filter_SNR_H1 = 4*jnp.sum((jnp.conj(h_test_H1)*H1_data)/H1_psd*df).real
-    match_filter_SNR_L1 = 4*jnp.sum((jnp.conj(h_test_L1)*L1_data)/L1_psd*df).real
-    optimal_SNR_H1 = 4*jnp.sum((jnp.conj(h_test_H1)*h_test_H1)/H1_psd*df).real
-    optimal_SNR_L1 = 4*jnp.sum((jnp.conj(h_test_L1)*h_test_L1)/L1_psd*df).real
+# @jax.jit
+# def negative_LogLikelihood(theta):
+#     theta_waveform = theta[:8]
+#     theta_waveform = theta_waveform.at[5].set(0)
+#     ra = theta[9]
+#     dec = theta[10]
+#     hp_test, hc_test = gen_lensed_IMRPhenomD_polar(H1_frequency, theta_waveform, f_ref)
+#     align_time = jnp.exp(-1j*2*jnp.pi*H1_frequency*(epoch+theta[5]))
+#     h_test_H1 = H1_response(H1_frequency, hp_test, hc_test, ra, dec, gmst, theta[8]) * align_time
+#     h_test_L1 = L1_response(L1_frequency, hp_test, hc_test, ra, dec, gmst, theta[8]) * align_time
+#     df = H1_frequency[1] - H1_frequency[0]
+#     match_filter_SNR_H1 = 4*jnp.sum((jnp.conj(h_test_H1)*H1_data)/H1_psd*df).real
+#     match_filter_SNR_L1 = 4*jnp.sum((jnp.conj(h_test_L1)*L1_data)/L1_psd*df).real
+#     optimal_SNR_H1 = 4*jnp.sum((jnp.conj(h_test_H1)*h_test_H1)/H1_psd*df).real
+#     optimal_SNR_L1 = 4*jnp.sum((jnp.conj(h_test_L1)*h_test_L1)/L1_psd*df).real
 
-    return -((match_filter_SNR_H1-optimal_SNR_H1/2) + (match_filter_SNR_L1-optimal_SNR_L1/2))
+#     return -((match_filter_SNR_H1-optimal_SNR_H1/2) + (match_filter_SNR_L1-optimal_SNR_L1/2))
 
-optimize_prior_range = jnp.array([[10,80],[0.2,0.25],[-1,1],[-1,1],[0,2000],[-0.1,0.1],[0,2*np.pi],[0,np.pi],[0,np.pi],[0,2*np.pi],[-np.pi/2,np.pi/2],[0,5000],[5e-4,1],[0,1.49999],[0,1.49999]])
+# optimize_prior_range = jnp.array([[10,80],[0.2,0.25],[-1,1],[-1,1],[0,2000],[-0.1,0.1],[0,2*np.pi],[0,np.pi],[0,np.pi],[0,2*np.pi],[-np.pi/2,np.pi/2],[0,5000],[5e-4,1],[0,1.49999],[0,1.49999]])
 
-import scipy
+# import scipy
 
-print("Calculating the reference parameters")
-optimize_result = scipy.optimize.differential_evolution(negative_LogLikelihood, optimize_prior_range, maxiter=10000)
-ref_param = jnp.array(optimize_result.x)
-print("Reference parameters: ", ref_param)
-# ref_param = jnp.array([ 3.10497857e+01,  2.46759666e-01,  3.04854781e-01, -4.92774588e-01,
-#         5.47223231e+02,  1.29378808e-02,  3.30994042e+00,  3.88802965e-01,
-#         3.41074151e-02,  2.55345319e+00, -9.52109059e-01, 6e+02, 1e-3, 0, 5e-1])
+# print("Calculating the reference parameters")
+# optimize_result = scipy.optimize.differential_evolution(negative_LogLikelihood, optimize_prior_range, maxiter=10000)
+# ref_param = jnp.array(optimize_result.x)
+# print("Reference parameters: ", ref_param)
+ref_param = jnp.array([ 3.10497857e+01,  2.46759666e-01,  3.04854781e-01, -4.92774588e-01,
+        5.47223231e+02,  1.29378808e-02,  3.30994042e+00,  3.88802965e-01,
+        3.41074151e-02,  2.55345319e+00, -9.52109059e-01, 6e+02, 1e-3, 0, 5e-1])
 
 from jaxgw.PE.heterodyneLikelihood import make_heterodyne_likelihood_mutliple_detector
 
