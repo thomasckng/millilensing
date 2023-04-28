@@ -122,7 +122,7 @@ def negative_LogLikelihood(theta):
 
     return -((match_filter_SNR_H1-optimal_SNR_H1/2) + (match_filter_SNR_L1-optimal_SNR_L1/2))
 
-optimize_prior_range = jnp.array([[10,80],[0.2,0.25],[-1,1],[-1,1],[0,2000],[-0.1,0.1],[0,2*np.pi],[0,np.pi],[0,np.pi],[0,2*np.pi],[-np.pi/2,np.pi/2],[0,5000],[5e-4,1],[0,1.49999],[0,1.49999]])
+optimize_prior_range = jnp.array([[20,40],[0.2,0.25],[-1,1],[-1,1],[0,2000],[-0.1,0.1],[0,2*np.pi],[0,np.pi],[0,np.pi],[0,2*np.pi],[-np.pi/2,np.pi/2],[0,5000],[5e-4,1],[0,1.49999],[0,1.49999]])
 
 import scipy
 
