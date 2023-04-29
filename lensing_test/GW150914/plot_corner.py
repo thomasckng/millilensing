@@ -28,8 +28,8 @@ g = sns.pairplot(df,
                         #  '$d_{L2}$', '$t_2$', '$n_1$', '$n_2$'
                          ],
                  corner=True, kind='hist',
-                 diag_kws=dict(common_norm=False),
-                 plot_kws=dict(common_norm=False, rasterized=True))
+                 diag_kws=dict(common_norm=False, rasterized=True),
+                 plot_kws=dict(common_norm=False))
 
 # from bilby.gw.result import CBCResult
 # result_GR = CBCResult.from_json("./data/GW150914_GR.json.gz").posterior
