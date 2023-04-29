@@ -17,7 +17,7 @@ import seaborn as sns
 
 g = sns.pairplot(df, corner=True, kind='hist',
                  diag_kws=dict(common_norm=False),
-                 plot_kws=dict(common_norm=False, bins=100, rasterized=True))
+                 plot_kws=dict(common_norm=False, rasterized=True))
 
 from bilby.gw.result import CBCResult
 result_GR = CBCResult.from_json("./data/GW150914_GR.json.gz").posterior
