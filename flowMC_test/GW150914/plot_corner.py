@@ -25,7 +25,17 @@ result_GR['cos_iota'] = np.cos([float(value) for value in result_GR['iota']])
 
 trigger_time = 1126259462.4
 
-true_param = np.array([result_GR['chirp_mass'].median(), result_GR['mass_ratio'].median(), result_GR['a_1'].median(), result_GR['a_2'].median(), result_GR['luminosity_distance'].median(), result_GR['geocent_time'].median() - trigger_time, result_GR['phase'].median(), result_GR['cos_iota'].median(), result_GR['psi'].median(), result_GR['ra'].median(), np.sin(result_GR['dec']).median()])
+true_param = np.array([result_GR['chirp_mass'].median(),
+                       result_GR['mass_ratio'].median(),
+                       result_GR['a_1'].median(),
+                       result_GR['a_2'].median(),
+                       result_GR['luminosity_distance'].median(),
+                       result_GR['geocent_time'].median() - trigger_time,
+                       result_GR['phase'].median(),
+                       result_GR['cos_iota'].median(),
+                       result_GR['psi'].median(),
+                       result_GR['ra'].median(),
+                       np.sin(result_GR['dec']).median()])
 
 for i in range(n_dim):
     g.axes[i,i].axvline(true_param[i], color=sns.color_palette()[3])

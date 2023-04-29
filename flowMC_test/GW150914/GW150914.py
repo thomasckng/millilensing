@@ -143,14 +143,14 @@ momentum = 0.9
 num_epochs = 60
 batch_size = 50000
 
-# guess_param = ref_param
+guess_param = ref_param
 
-# guess_param = np.array(jnp.repeat(guess_param[None,:],int(n_chains),axis=0)*np.random.normal(loc=1,scale=0.1,size=(int(n_chains),n_dim)))
-# guess_param[guess_param[:,1]>0.25,1] = 0.249
-# guess_param[:,6] = (guess_param[:,6]%(2*jnp.pi))
-# guess_param[:,7] = (guess_param[:,7]%(jnp.pi))
-# guess_param[:,8] = (guess_param[:,8]%(jnp.pi))
-# guess_param[:,9] = (guess_param[:,9]%(2*jnp.pi))
+guess_param = np.array(jnp.repeat(guess_param[None,:],int(n_chains),axis=0)*np.random.normal(loc=1,scale=0.1,size=(int(n_chains),n_dim)))
+guess_param[guess_param[:,1]>0.25,1] = 0.249
+guess_param[:,6] = (guess_param[:,6]%(2*jnp.pi))
+guess_param[:,7] = (guess_param[:,7]%(jnp.pi))
+guess_param[:,8] = (guess_param[:,8]%(jnp.pi))
+guess_param[:,9] = (guess_param[:,9]%(2*jnp.pi))
 
 
 print("Preparing RNG keys")
@@ -169,7 +169,7 @@ for i in range(n_dim):
 # m1,m2 = jax.vmap(Mc_eta_to_ms)(guess_param[:,:2])
 # q = m2/m1
 
-# initial_position = initial_position.at[:,0].set(guess_param[:,0])
+initial_position = initial_position.at[:,0].set(guess_param[:,0])
 
 from astropy.cosmology import Planck18 as cosmo
 
