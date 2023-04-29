@@ -10,9 +10,9 @@ import bilby
 from gwosc.datasets import event_detectors
 
 from ripple.waveforms.IMRPhenomD import gen_IMRPhenomD_polar
-from jaxgw.PE.detector_preset import * 
-# from jaxgw.PE.heterodyneLikelihood import make_heterodyne_likelihood
-from jaxgw.PE.detector_projection import make_detector_response
+from jimgw.PE.detector_preset import * 
+# from jimgw.PE.heterodyneLikelihood import make_heterodyne_likelihood
+from jimgw.PE.detector_projection import make_detector_response
 
 from flowMC.nfmodel.rqSpline import RQSpline
 from flowMC.sampler.Sampler import Sampler
@@ -134,7 +134,7 @@ print("Reference parameters: ", ref_param)
 #         5.47223231e+02,  1.29378808e-02,  3.30994042e+00,  3.88802965e-01,
 #         3.41074151e-02,  2.55345319e+00, -9.52109059e-01, 6e+02, 1e-3, 0, 5e-1])
 
-from jaxgw.PE.heterodyneLikelihood import make_heterodyne_likelihood_mutliple_detector
+from jimgw.PE.heterodyneLikelihood import make_heterodyne_likelihood_mutliple_detector
 
 data_list = [H1_data, L1_data]
 psd_list = [H1_psd, L1_psd]
