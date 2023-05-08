@@ -43,10 +43,10 @@ injection_parameters = dict(
     geocent_time=1126259642.413,
     ra=1.375,
     dec=-1.2108,
-    d_L2=1500,
+    d_L2=1300,
     dt=1e-3,
     n_1=0,
-    n_2=0.5
+    n_2=1
 )
 
 waveform_arguments = dict(
