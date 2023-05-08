@@ -55,4 +55,4 @@ for i in range(n_dim):
         g.axes[i,j].axvline(true_param[j], color=sns.color_palette()[3])
         g.axes[i,j].axhline(true_param[i], color=sns.color_palette()[3])
 
-g.figure.savefig('./result/corner.pdf')
+g.figure.savefig('./result/corner.pdf', dpi=300)
