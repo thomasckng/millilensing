@@ -254,7 +254,7 @@ mass_matrix = mass_matrix.at[5,5].set(1e-3)
 mass_matrix = mass_matrix.at[13,13].set(1e-1)
 mass_matrix = mass_matrix.at[14,14].set(1e-1)
 
-local_sampler = MALA(posterior, True, {"step_size": mass_matrix*3e-3})
+local_sampler = MALA(posterior, True, {"step_size": mass_matrix*5e-3})
 print("Running sampler")
 
 nf_sampler = Sampler(
