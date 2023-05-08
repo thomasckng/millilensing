@@ -34,8 +34,8 @@ f_sample = 4096
 injection_parameters = dict(
     mass_1=36.0,
     mass_2=29.0,
-    a_1=0.4,
-    a_2=0.3,
+    chi_1=0.4,
+    chi_2=0.3,
     luminosity_distance=1000.0,
     theta_jn=0.4,
     psi=2.659,
@@ -256,7 +256,7 @@ nf_sampler = Sampler(
 
 nf_sampler.sample(initial_position)
 chains, log_prob, local_accs, global_accs = nf_sampler.get_sampler_state().values()
-np.savez('./injection.npz', chains=chains, log_prob=log_prob, local_accs=local_accs, global_accs=global_accs)
+np.savez('./result/result.npz', chains=chains, log_prob=log_prob, local_accs=local_accs, global_accs=global_accs)
 
 print("Local acceptance rate: ", np.mean(local_accs))
 print("Global acceptance rate: ", np.mean(global_accs))
