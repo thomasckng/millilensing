@@ -13,6 +13,8 @@ df = pd.DataFrame()
 for i in range(11):
     df[labels[i]] = samples_all[:,i]
 
+df = df.sample(n=50000)
+
 import seaborn as sns
 
 g = sns.pairplot(df, corner=True, kind='hist',

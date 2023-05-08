@@ -15,6 +15,12 @@ for i in range(11):
 
 df = df.sample(n=50000)
 
+for i in [0, 0.5, 1]:
+    mask1 = (df['$n_1$'] >= i) & (df['$n_1$'] < i + 0.5)
+    df.loc[mask1, '$n_1$'] = i
+    mask2 = (df['$n_2$'] >= i) & (df['$n_2$'] < i + 0.5)
+    df.loc[mask2, '$n_2$'] = i
+
 import seaborn as sns
 
 g = sns.pairplot(df, corner=True, kind='hist',

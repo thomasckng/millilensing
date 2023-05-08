@@ -15,6 +15,8 @@ df = pd.DataFrame()
 for i in range(n_dim):
     df[labels[i]] = samples_all[:,i]
 
+df = df.sample(n=50000)
+
 for i in [0, 0.5, 1]:
     mask1 = (df['$n_1$'] >= i) & (df['$n_1$'] < i + 0.5)
     df.loc[mask1, '$n_1$'] = i
