@@ -20,50 +20,86 @@ from flowMC.sampler.MALA import MALA
 from flowMC.utils.PRNG_keys import initialize_rng_keys
 from flowMC.nfmodel.utils import *
 
-event = 'GW150914'
-
 minimum_frequency = 20
 maximum_frequency = 1024
 
-trigger_time = 1126259462.4
-duration = 4
+trigger_time = 1126259642.4
+duration = 4 
 post_trigger_duration = 2
 epoch = duration - post_trigger_duration
 gmst = GreenwichMeanSiderealTime(trigger_time)
 f_ref = 20
 f_sample = 4096
 
-print("fetching data")
-detectors=event_detectors(event)
-ifos = bilby.gw.detector.InterferometerList(detectors)
+injection_parameters = dict(
+    mass_1=36.0,
+    mass_2=29.0,
+    chi_1=0.4,
+    chi_2=0.3,
+    luminosity_distance=1000.0,
+    theta_jn=0.4,
+    psi=2.659,
+    phase=1.3,
+    geocent_time=1126259642.413,
+    ra=1.375,
+    dec=-1.2108,
+    d_L2=1500,
+    dt=1e-3,
+    n_1=0,
+    n_2=0.5
+)
 
-for detector in ifos:
-    analysis_data = TimeSeries.fetch_open_data(detector.name, trigger_time-duration+post_trigger_duration, trigger_time+post_trigger_duration, sample_rate=f_sample, cache=True)
-    detector.set_strain_data_from_gwpy_timeseries(analysis_data)
+waveform_arguments = dict(
+    waveform_approximant="IMRPhenomD",
+    reference_frequency=50.0,
+    minimum_frequency=20.0,
+)
 
-H1_frequency = ifos[1].frequency_array
-H1_data = ifos[1].frequency_domain_strain
+waveform_generator = bilby.gw.WaveformGenerator(
+    duration=duration,
+    sampling_frequency=f_sample,
+    frequency_domain_source_model=bilby.gw.source.lal_binary_black_hole,
+    parameter_conversion=bilby.gw.conversion.convert_to_lal_binary_black_hole_parameters,
+    waveform_arguments=waveform_arguments,
+)
+
+ifos = bilby.gw.detector.InterferometerList(["H1", "L1"])
+ifos.set_strain_data_from_power_spectral_densities(
+    sampling_frequency=f_sample,
+    duration=duration,
+    start_time=injection_parameters["geocent_time"] - 2,
+)
+ifos.inject_signal(
+    waveform_generator=waveform_generator, parameters=injection_parameters
+)
+
+# Amplification function
+w = 1j*2*jnp.pi*ifos[0].frequency_array
+F = jnp.exp(-1j*injection_parameters['n_1']*jnp.pi) + (injection_parameters['luminosity_distance']/injection_parameters['dt'])*(jnp.exp(w*injection_parameters['n_1']-1j*injection_parameters['n_2']*jnp.pi))
+
+H1_frequency = ifos[0].frequency_array
+H1_data = ifos[0].frequency_domain_strain*F
 H1_psd_frequency, H1_psd_temp = np.genfromtxt('/home/jason/thomas_folder/project/millilensing/psd/GW150914_psd_H1.dat').T
 if H1_psd_frequency[1] - H1_psd_frequency[0] == H1_frequency[1] - H1_frequency[0]:
     H1_psd = np.full(len(H1_frequency), np.inf)
     for i in range(len(H1_psd_frequency)):
         H1_psd[i] = H1_psd_temp[i]
 else:
-    print("df of H1 PSD is not equal to df of H1 data")
+    print('df of H1 PSD is not equal to df of H1 data')
 
 H1_data = H1_data[(H1_frequency>minimum_frequency)*(H1_frequency<maximum_frequency)]
 H1_psd = H1_psd[(H1_frequency>minimum_frequency)*(H1_frequency<maximum_frequency)]
 H1_frequency = H1_frequency[(H1_frequency>minimum_frequency)*(H1_frequency<maximum_frequency)]
 
-L1_frequency = ifos[0].frequency_array
-L1_data = ifos[0].frequency_domain_strain
+L1_frequency = ifos[1].frequency_array
+L1_data = ifos[1].frequency_domain_strain*F
 L1_psd_frequency, L1_psd_temp = np.genfromtxt('/home/jason/thomas_folder/project/millilensing/psd/GW150914_psd_L1.dat').T
 if L1_psd_frequency[1] - L1_psd_frequency[0] == L1_frequency[1] - L1_frequency[0]:
     L1_psd = np.full(len(L1_frequency), np.inf)
     for i in range(len(L1_psd_frequency)):
         L1_psd[i] = L1_psd_temp[i]
 else:
-    print("df of L1 PSD is not equal to df of L1 data")
+    print('df of L1 PSD is not equal to df of L1 data')
 
 L1_data = L1_data[(L1_frequency>minimum_frequency)*(L1_frequency<maximum_frequency)]
 L1_psd = L1_psd[(L1_frequency>minimum_frequency)*(L1_frequency<maximum_frequency)]
@@ -243,7 +279,7 @@ nf_sampler = Sampler(
 
 nf_sampler.sample(initial_position)
 chains, log_prob, local_accs, global_accs = nf_sampler.get_sampler_state().values()
-np.savez('./result/GW150914.npz', chains=chains, log_prob=log_prob, local_accs=local_accs, global_accs=global_accs)
+np.savez('./result/injection.npz', chains=chains, log_prob=log_prob, local_accs=local_accs, global_accs=global_accs)
 
 print("Local acceptance rate: ", np.mean(local_accs))
 print("Global acceptance rate: ", np.mean(global_accs))

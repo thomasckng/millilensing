@@ -185,7 +185,7 @@ def top_hat(x):
     for i in range(n_dim):
         output = jax.lax.cond(x[i]>=prior_range[i,0], lambda: output, lambda: -jnp.inf)
         output = jax.lax.cond(x[i]<=prior_range[i,1], lambda: output, lambda: -jnp.inf)
-    return output+jnp.log(jnp.interp(x[4],dL,dVdz))
+    return output+jnp.log(jnp.interp(x[4],dL,dVdz))+jnp.log(jnp.interp(x[11],dL,dVdz))
 
 def posterior(theta):
     q = theta[1]
