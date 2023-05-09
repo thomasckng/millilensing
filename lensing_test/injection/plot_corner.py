@@ -7,10 +7,12 @@ chains = np.load('./result/result.npz')['chains']
 
 samples_all = chains.reshape(-1,n_dim)
 
-labels = ['$M_c$', '$q$', '$\chi_1$', '$\chi_2$', '$d_L$', '$t_c$', '$\phi_c$', '$\cos\iota$', '$\psi$', '$RA$', '$\sin({DEC})$']
+labels = ['$M_c$', '$q$', '$\chi_1$', '$\chi_2$', '$d_L$', '$t_c$', '$\phi_c$', '$\cos\iota$', '$\psi$', '$RA$', '$\sin({DEC})$',
+          '$d_{L2}$', '$t_2$', '$n_1$', '$n_2$'
+          ]
 
 df = pd.DataFrame()
-for i in range(11):
+for i in range(n_dim):
     df[labels[i]] = samples_all[:,i]
 
 df = df.sample(n=50000)
