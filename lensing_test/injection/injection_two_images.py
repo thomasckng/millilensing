@@ -75,7 +75,7 @@ ifos.inject_signal(
 
 # Amplification function
 w = 1j*2*jnp.pi*ifos[0].frequency_array
-F = jnp.exp(-1j*injection_parameters['n_1']*jnp.pi) + (injection_parameters['luminosity_distance']/injection_parameters['dt'])*(jnp.exp(w*injection_parameters['n_1']-1j*injection_parameters['n_2']*jnp.pi))
+F = jnp.exp(-1j*injection_parameters['n_1']*jnp.pi) + (injection_parameters['luminosity_distance']/injection_parameters['d_L2'])*(jnp.exp(w*injection_parameters['dt']-1j*injection_parameters['n_2']*jnp.pi))
 
 H1_frequency = ifos[0].frequency_array
 H1_data = ifos[0].frequency_domain_strain*F
