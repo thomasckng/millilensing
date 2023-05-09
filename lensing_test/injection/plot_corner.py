@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-n_dim = 11
+n_dim = 15
 
 chains = np.load('./result/result.npz')['chains']
 
