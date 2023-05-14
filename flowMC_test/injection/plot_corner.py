@@ -4,6 +4,7 @@ import numpy as np
 n_dim = 11
 
 chains = np.load('./result/result.npz')['chains']
+injection_parameters = np.load('./result/result.npz')['injection_parameters']
 
 samples_all = chains.reshape(-1,n_dim)
 
@@ -22,20 +23,6 @@ g = sns.pairplot(df, corner=True, kind='hist',
                  plot_kws=dict(common_norm=False))
 
 trigger_time = 1126259642.4
-
-injection_parameters = dict(
-    mass_1=36.0,
-    mass_2=29.0,
-    chi_1=0.4,
-    chi_2=0.3,
-    luminosity_distance=1000.0,
-    theta_jn=0.4,
-    psi=2.659,
-    phase=1.3,
-    geocent_time=1126259642.413,
-    ra=1.375,
-    dec=-1.2108,
-)
 
 from bilby.gw.conversion import component_masses_to_chirp_mass, component_masses_to_mass_ratio
 
