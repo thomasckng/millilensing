@@ -4,7 +4,7 @@ import numpy as np
 n_dim = 11
 
 chains = np.load('./result/result.npz')['chains']
-injection_parameters = np.load('./result/result.npz', allow_pickle=True)['injection_parameters']
+injection_parameters = np.load('./result/result.npz', allow_pickle=True)['injection_parameters'].item()
 
 samples_all = chains.reshape(-1,n_dim)
 
