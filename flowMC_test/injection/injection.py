@@ -23,7 +23,7 @@ from flowMC.nfmodel.utils import *
 minimum_frequency = 20
 maximum_frequency = 1024
 
-trigger_time = 1126259642.4
+trigger_time = 1126259542.9
 duration = 4
 post_trigger_duration = 2
 epoch = duration - post_trigger_duration
@@ -40,7 +40,7 @@ injection_parameters = dict(
     theta_jn=2.699,
     psi=1.466,
     phase=3.485,
-    geocent_time=1126259642.413,
+    geocent_time=1126259542.918,
     ra=1.788,
     dec=-1.22,
 )
