@@ -24,7 +24,7 @@ minimum_frequency = 20
 maximum_frequency = 1024
 
 trigger_time = 1126259642.4
-duration = 4 
+duration = 4
 post_trigger_duration = 2
 epoch = duration - post_trigger_duration
 gmst = GreenwichMeanSiderealTime(trigger_time)
@@ -32,17 +32,17 @@ f_ref = 20
 f_sample = 4096
 
 injection_parameters = dict(
-    mass_1=36.0,
-    mass_2=29.0,
-    chi_1=0.4,
-    chi_2=0.3,
-    luminosity_distance=1000.0,
-    theta_jn=0.4,
-    psi=2.659,
-    phase=1.3,
+    mass_1=38.26,
+    mass_2=32.2,
+    chi_1=0.43,
+    chi_2=0.4,
+    luminosity_distance=463,
+    theta_jn=2.699,
+    psi=1.466,
+    phase=3.485,
     geocent_time=1126259642.413,
-    ra=1.375,
-    dec=-1.2108,
+    ra=1.788,
+    dec=-1.22,
 )
 
 waveform_arguments = dict(
