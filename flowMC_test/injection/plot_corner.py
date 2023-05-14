@@ -22,7 +22,7 @@ g = sns.pairplot(df, corner=True, kind='hist',
                  diag_kws=dict(common_norm=False, rasterized=True),
                  plot_kws=dict(common_norm=False))
 
-trigger_time = 1126259642.4
+trigger_time = 1126259542.9
 
 from bilby.gw.conversion import component_masses_to_chirp_mass, component_masses_to_mass_ratio
 
