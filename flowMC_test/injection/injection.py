@@ -1,5 +1,5 @@
 import os
-os.environ["XLA_PYTHON_CLIENT_MEM_FRACTION"]=".8"
+os.environ["XLA_PYTHON_CLIENT_MEM_FRACTION"]=".7"
 
 import numpy as np
 import jax.numpy as jnp
