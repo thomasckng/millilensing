@@ -25,8 +25,8 @@ injection_parameters = dict(
     theta_jn=0.73,
     psi=3.16,
     phase=3.134,
-    geocent_time=1238782700.3,
-    trigger_time=1238782700.25,
+    geocent_time=1238782750.3,
+    trigger_time=1238782750.25,
     ra=6.088,
     dec=0.92,
 )
@@ -71,7 +71,7 @@ ifos.inject_signal(
 
 H1_frequency = ifos[0].frequency_array
 H1_data = ifos[0].frequency_domain_strain
-H1_psd_frequency, H1_psd_temp = np.genfromtxt('/home/jason/thomas_folder/project/millilensing/psd/GW190521_psd_H1.dat').T
+H1_psd_frequency, H1_psd_temp = np.genfromtxt('/home/jason/thomas_folder/project/millilensing/psd/GW190408_181802_psd_H1.dat').T
 if H1_psd_frequency[1] - H1_psd_frequency[0] == H1_frequency[1] - H1_frequency[0]:
     H1_psd = np.full(len(H1_frequency), np.inf)
     for i in range(len(H1_psd_frequency)):
@@ -85,7 +85,7 @@ H1_frequency = H1_frequency[(H1_frequency>minimum_frequency)*(H1_frequency<maxim
 
 L1_frequency = ifos[1].frequency_array
 L1_data = ifos[1].frequency_domain_strain
-L1_psd_frequency, L1_psd_temp = np.genfromtxt('/home/jason/thomas_folder/project/millilensing/psd/GW190521_psd_L1.dat').T
+L1_psd_frequency, L1_psd_temp = np.genfromtxt('/home/jason/thomas_folder/project/millilensing/psd/GW190408_181802_psd_L1.dat').T
 if L1_psd_frequency[1] - L1_psd_frequency[0] == L1_frequency[1] - L1_frequency[0]:
     L1_psd = np.full(len(L1_frequency), np.inf)
     for i in range(len(L1_psd_frequency)):
@@ -99,7 +99,7 @@ L1_frequency = L1_frequency[(L1_frequency>minimum_frequency)*(L1_frequency<maxim
 
 # V1_frequency = ifos[2].frequency_array
 # V1_data = ifos[2].frequency_domain_strain
-# V1_psd_frequency, V1_psd_temp = np.genfromtxt('/home/jason/thomas_folder/project/millilensing/psd/GW190521_psd_V1.dat').T
+# V1_psd_frequency, V1_psd_temp = np.genfromtxt('/home/jason/thomas_folder/project/millilensing/psd/GW190408_181802_psd_V1.dat').T
 # if V1_psd_frequency[1] - V1_psd_frequency[0] == V1_frequency[1] - V1_frequency[0]:
 #     V1_psd = np.full(len(V1_frequency), np.inf)
 #     for i in range(len(V1_psd_frequency)):
