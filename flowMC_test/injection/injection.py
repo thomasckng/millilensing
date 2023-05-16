@@ -5,31 +5,16 @@ import numpy as np
 import jax.numpy as jnp
 import jax
 from lal import GreenwichMeanSiderealTime
-from gwpy.timeseries import TimeSeries
 import bilby
-from gwosc.datasets import event_detectors
 
 from ripple.waveforms.IMRPhenomD import gen_IMRPhenomD_polar
-from jimgw.PE.detector_preset import * 
-# from jimgw.PE.heterodyneLikelihood import make_heterodyne_likelihood
+from jimgw.PE.detector_preset import get_H1, get_L1, get_V1
 from jimgw.PE.detector_projection import make_detector_response
 
 from flowMC.nfmodel.rqSpline import RQSpline
 from flowMC.sampler.Sampler import Sampler
 from flowMC.sampler.MALA import MALA
 from flowMC.utils.PRNG_keys import initialize_rng_keys
-from flowMC.nfmodel.utils import *
-
-minimum_frequency = 20
-maximum_frequency = 1024
-
-
-duration = 4
-post_trigger_duration = 2
-epoch = duration - post_trigger_duration
-gmst = GreenwichMeanSiderealTime(trigger_time)
-f_ref = 20
-f_sample = 4096
 
 injection_parameters = dict(
     mass_1=38.26,
@@ -40,13 +25,23 @@ injection_parameters = dict(
     theta_jn=2.699,
     psi=1.466,
     phase=3.485,
-    geocent_time=1126259542.918,
-    trigger_time = 1126259542.9,
+    geocent_time=1242443067.448,
+    trigger_time = 1242442967.4,
     ra=1.788,
     dec=-1.22,
 )
 
 trigger_time = injection_parameters["trigger_time"]
+
+minimum_frequency = 20
+maximum_frequency = 1024
+
+duration = 4
+post_trigger_duration = 2
+epoch = duration - post_trigger_duration
+gmst = GreenwichMeanSiderealTime(trigger_time)
+f_ref = 20
+f_sample = 4096
 
 waveform_arguments = dict(
     waveform_approximant="IMRPhenomD",
@@ -62,7 +57,7 @@ waveform_generator = bilby.gw.WaveformGenerator(
     waveform_arguments=waveform_arguments,
 )
 
-ifos = bilby.gw.detector.InterferometerList(["H1", "L1"])
+ifos = bilby.gw.detector.InterferometerList(["H1", "L1", "V1"])
 ifos.set_strain_data_from_power_spectral_densities(
     sampling_frequency=f_sample,
     duration=duration,
@@ -74,7 +69,7 @@ ifos.inject_signal(
 
 H1_frequency = ifos[0].frequency_array
 H1_data = ifos[0].frequency_domain_strain
-H1_psd_frequency, H1_psd_temp = np.genfromtxt('/home/jason/thomas_folder/project/millilensing/psd/GW150914_psd_H1.dat').T
+H1_psd_frequency, H1_psd_temp = np.genfromtxt('/home/jason/thomas_folder/project/millilensing/psd/GW190521_psd_H1.dat').T
 if H1_psd_frequency[1] - H1_psd_frequency[0] == H1_frequency[1] - H1_frequency[0]:
     H1_psd = np.full(len(H1_frequency), np.inf)
     for i in range(len(H1_psd_frequency)):
@@ -88,7 +83,7 @@ H1_frequency = H1_frequency[(H1_frequency>minimum_frequency)*(H1_frequency<maxim
 
 L1_frequency = ifos[1].frequency_array
 L1_data = ifos[1].frequency_domain_strain
-L1_psd_frequency, L1_psd_temp = np.genfromtxt('/home/jason/thomas_folder/project/millilensing/psd/GW150914_psd_L1.dat').T
+L1_psd_frequency, L1_psd_temp = np.genfromtxt('/home/jason/thomas_folder/project/millilensing/psd/GW190521_psd_L1.dat').T
 if L1_psd_frequency[1] - L1_psd_frequency[0] == L1_frequency[1] - L1_frequency[0]:
     L1_psd = np.full(len(L1_frequency), np.inf)
     for i in range(len(L1_psd_frequency)):
@@ -100,10 +95,26 @@ L1_data = L1_data[(L1_frequency>minimum_frequency)*(L1_frequency<maximum_frequen
 L1_psd = L1_psd[(L1_frequency>minimum_frequency)*(L1_frequency<maximum_frequency)]
 L1_frequency = L1_frequency[(L1_frequency>minimum_frequency)*(L1_frequency<maximum_frequency)]
 
+V1_frequency = ifos[2].frequency_array
+V1_data = ifos[2].frequency_domain_strain
+V1_psd_frequency, V1_psd_temp = np.genfromtxt('/home/jason/thomas_folder/project/millilensing/psd/GW190521_psd_V1.dat').T
+if V1_psd_frequency[1] - V1_psd_frequency[0] == V1_frequency[1] - V1_frequency[0]:
+    V1_psd = np.full(len(V1_frequency), np.inf)
+    for i in range(len(V1_psd_frequency)):
+        V1_psd[i] = V1_psd_temp[i]
+else:
+    print('df of V1 PSD is not equal to df of V1 data')
+
+V1_data = V1_data[(V1_frequency>minimum_frequency)*(V1_frequency<maximum_frequency)]
+V1_psd = V1_psd[(V1_frequency>minimum_frequency)*(V1_frequency<maximum_frequency)]
+V1_frequency = V1_frequency[(V1_frequency>minimum_frequency)*(V1_frequency<maximum_frequency)]
+
 H1 = get_H1()
 H1_response = make_detector_response(H1[0], H1[1])
 L1 = get_L1()
 L1_response = make_detector_response(L1[0], L1[1])
+V1 = get_V1()
+V1_response = make_detector_response(V1[0], V1[1])
 
 
 # def gen_waveform_H1(f, theta, epoch, gmst, f_ref):
@@ -132,13 +143,16 @@ def negative_LogLikelihood(theta):
     align_time = jnp.exp(-1j*2*jnp.pi*H1_frequency*(epoch+theta[5]))
     h_test_H1 = H1_response(H1_frequency, hp_test, hc_test, ra, dec, gmst, theta[8]) * align_time
     h_test_L1 = L1_response(L1_frequency, hp_test, hc_test, ra, dec, gmst, theta[8]) * align_time
+    h_test_V1 = V1_response(V1_frequency, hp_test, hc_test, ra, dec, gmst, theta[8]) * align_time
     df = H1_frequency[1] - H1_frequency[0]
     match_filter_SNR_H1 = 4*jnp.sum((jnp.conj(h_test_H1)*H1_data)/H1_psd*df).real
     match_filter_SNR_L1 = 4*jnp.sum((jnp.conj(h_test_L1)*L1_data)/L1_psd*df).real
+    match_filter_SNR_V1 = 4*jnp.sum((jnp.conj(h_test_V1)*V1_data)/V1_psd*df).real
     optimal_SNR_H1 = 4*jnp.sum((jnp.conj(h_test_H1)*h_test_H1)/H1_psd*df).real
     optimal_SNR_L1 = 4*jnp.sum((jnp.conj(h_test_L1)*h_test_L1)/L1_psd*df).real
+    optimal_SNR_V1 = 4*jnp.sum((jnp.conj(h_test_V1)*h_test_V1)/V1_psd*df).real
 
-    return -((match_filter_SNR_H1-optimal_SNR_H1/2) + (match_filter_SNR_L1-optimal_SNR_L1/2))
+    return -((match_filter_SNR_H1-optimal_SNR_H1/2) + (match_filter_SNR_L1-optimal_SNR_L1/2) + (match_filter_SNR_V1-optimal_SNR_V1/2))
 
 optimize_prior_range = jnp.array([[20,40],[0.2,0.25],[-1,1],[-1,1],[10,2000],[-0.1,0.1],[0,2*np.pi],[0,np.pi],[0,np.pi],[0,2*np.pi],[-np.pi/2,np.pi/2]])
 
@@ -149,15 +163,11 @@ optimize_result = scipy.optimize.differential_evolution(negative_LogLikelihood, 
 ref_param = jnp.array(optimize_result.x)
 print("Reference parameters: ", ref_param)
 
-# ref_param = jnp.array([ 3.10497857e+01,  2.46759666e-01,  3.04854781e-01, -4.92774588e-01,
-#         5.47223231e+02,  1.29378808e-02,  3.30994042e+00,  3.88802965e-01,
-#         3.41074151e-02,  2.55345319e+00, -9.52109059e-01])
-
 from jimgw.PE.heterodyneLikelihood import make_heterodyne_likelihood_mutliple_detector
 
-data_list = [H1_data, L1_data]
-psd_list = [H1_psd, L1_psd]
-response_list = [H1_response, L1_response]
+data_list = [H1_data, L1_data, V1_data]
+psd_list = [H1_psd, L1_psd, V1_psd]
+response_list = [H1_response, L1_response, V1_response]
 
 logL = make_heterodyne_likelihood_mutliple_detector(data_list, psd_list, response_list, gen_IMRPhenomD_polar, ref_param, H1_frequency, gmst, epoch, f_ref, 301)
 
