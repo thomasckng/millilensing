@@ -26,7 +26,7 @@ injection_parameters = dict(
     psi=1.466,
     phase=3.485,
     geocent_time=1242443067.448,
-    trigger_time = 1242442967.4,
+    trigger_time=1242443067.4,
     ra=1.788,
     dec=-1.22,
 )
