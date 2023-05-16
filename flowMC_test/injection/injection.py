@@ -77,7 +77,9 @@ if H1_psd_frequency[1] - H1_psd_frequency[0] == H1_frequency[1] - H1_frequency[0
     for i in range(len(H1_psd_frequency)):
         H1_psd[i] = H1_psd_temp[i]
 else:
-    print('df of H1 PSD is not equal to df of H1 data')
+    H1_psd = np.full(len(H1_frequency), np.inf)
+    for i in range(len(H1_frequency)):
+        H1_psd[i] = np.interp(H1_frequency[i], H1_psd_frequency, H1_psd_temp)
 
 H1_data = H1_data[(H1_frequency>minimum_frequency)*(H1_frequency<maximum_frequency)]
 H1_psd = H1_psd[(H1_frequency>minimum_frequency)*(H1_frequency<maximum_frequency)]
@@ -91,7 +93,9 @@ if L1_psd_frequency[1] - L1_psd_frequency[0] == L1_frequency[1] - L1_frequency[0
     for i in range(len(L1_psd_frequency)):
         L1_psd[i] = L1_psd_temp[i]
 else:
-    print('df of L1 PSD is not equal to df of L1 data')
+    L1_psd = np.full(len(L1_frequency), np.inf)
+    for i in range(len(L1_frequency)):
+        L1_psd[i] = np.interp(L1_frequency[i], L1_psd_frequency, L1_psd_temp)
 
 L1_data = L1_data[(L1_frequency>minimum_frequency)*(L1_frequency<maximum_frequency)]
 L1_psd = L1_psd[(L1_frequency>minimum_frequency)*(L1_frequency<maximum_frequency)]
@@ -105,7 +109,9 @@ L1_frequency = L1_frequency[(L1_frequency>minimum_frequency)*(L1_frequency<maxim
 #     for i in range(len(V1_psd_frequency)):
 #         V1_psd[i] = V1_psd_temp[i]
 # else:
-#     print('df of V1 PSD is not equal to df of V1 data')
+#     V1_psd = np.full(len(V1_frequency), np.inf)
+#     for i in range(len(V1_frequency)):
+#         V1_psd[i] = np.interp(V1_frequency[i], V1_psd_frequency, V1_psd_temp)
 
 # V1_data = V1_data[(V1_frequency>minimum_frequency)*(V1_frequency<maximum_frequency)]
 # V1_psd = V1_psd[(V1_frequency>minimum_frequency)*(V1_frequency<maximum_frequency)]
