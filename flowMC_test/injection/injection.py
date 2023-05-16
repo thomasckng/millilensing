@@ -17,18 +17,18 @@ from flowMC.sampler.MALA import MALA
 from flowMC.utils.PRNG_keys import initialize_rng_keys
 
 injection_parameters = dict(
-    mass_1=38.26,
-    mass_2=32.2,
-    chi_1=0.43,
-    chi_2=0.4,
-    luminosity_distance=463,
-    theta_jn=2.699,
-    psi=1.466,
-    phase=3.485,
-    geocent_time=1242443067.448,
-    trigger_time=1242443067.4,
-    ra=1.788,
-    dec=-1.22,
+    mass_1=31.6,
+    mass_2=23.7,
+    chi_1=0.35,
+    chi_2=0.36,
+    luminosity_distance=1598,
+    theta_jn=0.73,
+    psi=3.16,
+    phase=3.134,
+    geocent_time=1238782700.3,
+    trigger_time=1238782700.25,
+    ra=6.088,
+    dec=0.92,
 )
 
 trigger_time = injection_parameters["trigger_time"]
@@ -158,7 +158,7 @@ def negative_LogLikelihood(theta):
             #  + (match_filter_SNR_V1-optimal_SNR_V1/2)
              )
 
-optimize_prior_range = jnp.array([[20,40],[0.2,0.25],[-1,1],[-1,1],[10,2000],[-0.1,0.1],[0,2*np.pi],[0,np.pi],[0,np.pi],[0,2*np.pi],[-np.pi/2,np.pi/2]])
+optimize_prior_range = jnp.array([[20,40],[0.2,0.25],[-1,1],[-1,1],[10,3000],[-0.1,0.1],[0,2*np.pi],[0,np.pi],[0,np.pi],[0,2*np.pi],[-np.pi/2,np.pi/2]])
 
 import scipy
 
@@ -208,7 +208,7 @@ rng_key_set = initialize_rng_keys(n_chains, seed=42)
 
 print("Initializing MCMC model and normalizing flow model.")
 
-prior_range = jnp.array([[20,40],[0.125,1.0],[-1,1],[-1,1],[0,2000],[-0.1,0.1],[0,2*np.pi],[-1,1],[0,np.pi],[0,2*np.pi],[-1,1]])
+prior_range = jnp.array([[20,40],[0.125,1.0],[-1,1],[-1,1],[0,3000],[-0.1,0.1],[0,2*np.pi],[-1,1],[0,np.pi],[0,2*np.pi],[-1,1]])
 
 
 initial_position = jax.random.uniform(rng_key_set[0], shape=(int(n_chains), n_dim)) * 1
