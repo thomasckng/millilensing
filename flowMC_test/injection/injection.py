@@ -72,14 +72,8 @@ ifos.inject_signal(
 H1_frequency = ifos[0].frequency_array
 H1_data = ifos[0].frequency_domain_strain
 H1_psd_frequency, H1_psd_temp = np.genfromtxt('/home/jason/thomas_folder/project/millilensing/psd/GW190408_181802_psd_H1.dat').T
-if H1_psd_frequency[1] - H1_psd_frequency[0] == H1_frequency[1] - H1_frequency[0]:
-    H1_psd = np.full(len(H1_frequency), np.inf)
-    for i in range(len(H1_psd_frequency)):
-        H1_psd[i] = H1_psd_temp[i]
-else:
-    H1_psd = np.full(len(H1_frequency), np.inf)
-    for i in range(len(H1_frequency)):
-        H1_psd[i] = np.interp(H1_frequency[i], H1_psd_frequency, H1_psd_temp)
+H1_psd = np.full(len(H1_frequency), np.inf)
+H1_psd = [np.interp(H1_frequency[i], H1_psd_frequency, H1_psd_temp) for i in range(len(H1_psd_frequency))]
 
 H1_data = H1_data[(H1_frequency>minimum_frequency)*(H1_frequency<maximum_frequency)]
 H1_psd = H1_psd[(H1_frequency>minimum_frequency)*(H1_frequency<maximum_frequency)]
@@ -88,14 +82,8 @@ H1_frequency = H1_frequency[(H1_frequency>minimum_frequency)*(H1_frequency<maxim
 L1_frequency = ifos[1].frequency_array
 L1_data = ifos[1].frequency_domain_strain
 L1_psd_frequency, L1_psd_temp = np.genfromtxt('/home/jason/thomas_folder/project/millilensing/psd/GW190408_181802_psd_L1.dat').T
-if L1_psd_frequency[1] - L1_psd_frequency[0] == L1_frequency[1] - L1_frequency[0]:
-    L1_psd = np.full(len(L1_frequency), np.inf)
-    for i in range(len(L1_psd_frequency)):
-        L1_psd[i] = L1_psd_temp[i]
-else:
-    L1_psd = np.full(len(L1_frequency), np.inf)
-    for i in range(len(L1_frequency)):
-        L1_psd[i] = np.interp(L1_frequency[i], L1_psd_frequency, L1_psd_temp)
+L1_psd = np.full(len(L1_frequency), np.inf)
+L1_psd = [np.interp(L1_frequency[i], L1_psd_frequency, L1_psd_temp) for i in range(len(L1_psd_frequency))]
 
 L1_data = L1_data[(L1_frequency>minimum_frequency)*(L1_frequency<maximum_frequency)]
 L1_psd = L1_psd[(L1_frequency>minimum_frequency)*(L1_frequency<maximum_frequency)]
@@ -104,14 +92,8 @@ L1_frequency = L1_frequency[(L1_frequency>minimum_frequency)*(L1_frequency<maxim
 # V1_frequency = ifos[2].frequency_array
 # V1_data = ifos[2].frequency_domain_strain
 # V1_psd_frequency, V1_psd_temp = np.genfromtxt('/home/jason/thomas_folder/project/millilensing/psd/GW190408_181802_psd_V1.dat').T
-# if V1_psd_frequency[1] - V1_psd_frequency[0] == V1_frequency[1] - V1_frequency[0]:
-#     V1_psd = np.full(len(V1_frequency), np.inf)
-#     for i in range(len(V1_psd_frequency)):
-#         V1_psd[i] = V1_psd_temp[i]
-# else:
-#     V1_psd = np.full(len(V1_frequency), np.inf)
-#     for i in range(len(V1_frequency)):
-#         V1_psd[i] = np.interp(V1_frequency[i], V1_psd_frequency, V1_psd_temp)
+# V1_psd = np.full(len(V1_frequency), np.inf)
+# V1_psd = [np.interp(V1_frequency[i], V1_psd_frequency, V1_psd_temp) for i in range(len(V1_psd_frequency))]
 
 # V1_data = V1_data[(V1_frequency>minimum_frequency)*(V1_frequency<maximum_frequency)]
 # V1_psd = V1_psd[(V1_frequency>minimum_frequency)*(V1_frequency<maximum_frequency)]
